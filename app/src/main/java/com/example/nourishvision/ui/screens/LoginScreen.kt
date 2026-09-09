@@ -93,34 +93,6 @@ fun LoginScreen(
         ) {
             Text("Login", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Pemisah "atau"
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray.copy(alpha = 0.3f))
-            Text(" atau ", modifier = Modifier.padding(horizontal = 12.dp), color = Color.Gray)
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray.copy(alpha = 0.3f))
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Tombol Google (Outlined)
-        OutlinedButton(
-            onClick = { /* Login dengan Google */ },
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        ) {
-            Text(
-                text = "Login dengan Google",
-                color = Color.Black,
-                fontWeight = FontWeight.Medium
-            )
-            // Untuk ikon Google, Anda bisa menambahkan Image(painter = painterResource(id = R.drawable.google_logo), ...) di sini
-        }
-
         Spacer(modifier = Modifier.height(24.dp))
 
         // Link Daftar
