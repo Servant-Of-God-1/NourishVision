@@ -2,18 +2,17 @@
 package com.example.nourishvision.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,56 +25,50 @@ import androidx.compose.ui.unit.sp
 import com.example.nourishvision.R
 import com.example.nourishvision.ui.theme.GreenLight
 import com.example.nourishvision.ui.theme.GreenPrimary
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
+
+data class HistoryItem(
+    val id: Int,
+    val foodName: String,
+    val date: String,
+    val score: Int,
+    val imageRes: Int
+)
 
 @Composable
 fun HomeScreen(
     onNavigateToBalance: () -> Unit,
     onNavigateToHistory: () -> Unit
 ) {
-    Scaffold(
-        bottomBar = { BottomNavBar() }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item { HeaderHome() }
-            item { FoodBalanceCard(onClick = onNavigateToBalance) }
-            item {
-                SectionTitleWithAction(
-                    title = "Riwayat Terbaru",
-                    onSeeAll = onNavigateToHistory
-                )
-            }
-
-            // Ubah HistoryItem agar menampilkan gambar bulat
-            item {
-                HistoryItem(
-                    imageRes = R.drawable.ic_launcher_background, // Ganti dengan gambar makanan Anda
-                    name = "Nasi + Ayam + Sayur",
-                    score = "86/100",
-                    date = "15/10/2024",
-                    onClick = onNavigateToHistory
-                )
-            }
-            item {
-                HistoryItem(
-                    imageRes = R.drawable.ic_launcher_background,
-                    name = "Nasi + Telur",
-                    score = "62/100",
-                    date = "14/10/2024",
-                    onClick = onNavigateToHistory
-                )
-            }
+    val historyList = remember {
+        listOf(
+            HistoryItem(1, "Nasi + Ayam + Sayur", "15/10/2024", 86, R.drawable.ic_launcher_background),
+            HistoryItem(2, "Nasi + Telur", "15/10/2024", 62, R.drawable.ic_launcher_background),
+            HistoryItem(3, "Bakso + Mie", "14/10/2024", 73, R.drawable.ic_launcher_background),
+            HistoryItem(4, "Roti + Kopi", "14/10/2024", 70, R.drawable.ic_launcher_background),
+            HistoryItem(5, "Nasi Goreng", "13/10/2024", 90, R.drawable.ic_launcher_background)
+        )
+    }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            HeaderHome()
+        }
+        item {
+            FoodBalanceCard(onClick = onNavigateToBalance)
+        }
+        item {
+            SectionTitleWithAction(
+                title = "Riwayat Terbaru",
+                onSeeAll = onNavigateToHistory
+            )
+        }
+        items(historyList) { item ->
+            HistoryItemCard(
+                item = item,
+                onClick = onNavigateToHistory
+            )
         }
     }
 }
@@ -115,7 +108,7 @@ fun FoodBalanceCard(onClick: () -> Unit) {
             Button(
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                shape = RoundedCornerShape(50) // Tombol lebih membulat
+                shape = RoundedCornerShape(50)
             ) {
                 Text("Detail")
             }
@@ -137,14 +130,9 @@ fun SectionTitleWithAction(title: String, onSeeAll: () -> Unit) {
     }
 }
 
+// 3. Kartu Riwayat yang Lebih Lengkap
 @Composable
-fun HistoryItem(
-    imageRes: Int,
-    name: String,
-    score: String,
-    date: String,
-    onClick: () -> Unit
-) {
+fun HistoryItemCard(item: HistoryItem, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -156,10 +144,10 @@ fun HistoryItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Tambahkan Gambar Bulat di Kiri
+            // Gambar Makanan
             Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = name,
+                painter = painterResource(id = item.imageRes),
+                contentDescription = item.foodName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(50.dp)
@@ -170,52 +158,17 @@ fun HistoryItem(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(name, fontWeight = FontWeight.SemiBold, color = Color.Black)
-                Text(date, fontSize = 12.sp, color = Color.Gray)
+                Text(item.foodName, fontWeight = FontWeight.SemiBold, color = Color.Black)
+                Text(item.date, fontSize = 12.sp, color = Color.Gray)
             }
 
-            // Skor di Kanan
-            Text(score, color = GreenPrimary, fontWeight = FontWeight.Bold)
+            Text(item.score.toString(), color = GreenPrimary, fontWeight = FontWeight.Bold)
 
-            // Panah kecil sebagai penanda bisa diklik
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "Detail",
                 tint = Color.Gray,
                 modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun BottomNavBar() {
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf(
-        "Home" to Icons.Default.Home,
-        "Scan" to Icons.Default.PhotoCamera,
-        "Riwayat" to Icons.Default.DateRange,
-        "Progres" to Icons.AutoMirrored.Filled.TrendingUp,
-        "Profil" to Icons.Default.Person
-    )
-
-    NavigationBar(
-        containerColor = Color.White,
-        contentColor = GreenPrimary
-    ) {
-        items.forEachIndexed { index, (label, icon) ->
-            NavigationBarItem(
-                selected = selectedItem == index,
-                onClick = { selectedItem = index },
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = GreenPrimary,
-                    selectedTextColor = GreenPrimary,
-                    unselectedIconColor = Color.Gray,
-                    unselectedTextColor = Color.Gray,
-                    indicatorColor = GreenLight
-                )
             )
         }
     }

@@ -1,3 +1,4 @@
+// ui/screens/HistoryScreen.kt
 package com.example.nourishvision.ui.screens
 
 import androidx.compose.foundation.Image
@@ -26,91 +27,79 @@ import com.example.nourishvision.R
 import com.example.nourishvision.ui.theme.GreenLight
 import com.example.nourishvision.ui.theme.GreenPrimary
 
-data class HistoryItem(
-    val id: Int,
-    val foodName: String,
-    val date: String,
-    val score: Int,
-    val imageRes: Int
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(onBack: () -> Unit) {
+    // Data dummy
     val historyList = remember {
         listOf(
-            HistoryItem(1, "Nasi + Ayam + Sayur", "15/10/2024 - 12:30", 86, R.drawable.ic_launcher_background), // Ganti dengan gambar makanan Anda
+            HistoryItem(1, "Nasi + Ayam + Sayur", "15/10/2024 - 12:30", 86, R.drawable.ic_launcher_background),
             HistoryItem(2, "Nasi + Telur", "15/10/2024 - 08:15", 62, R.drawable.ic_launcher_background),
             HistoryItem(3, "Bakso + Mie", "14/10/2024 - 19:00", 73, R.drawable.ic_launcher_background),
             HistoryItem(4, "Roti + Kopi", "14/10/2024 - 07:30", 70, R.drawable.ic_launcher_background)
         )
     }
 
-    var selectedFilter by remember { mutableStateOf("Hari Ini") } // Default filter
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Riwayat", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-            )
-        },
-        containerColor = Color.White
-    ) { paddingValues ->
-        Column(
+    var selectedFilter by remember { mutableStateOf("Hari Ini") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(horizontal = 16.dp)
+    ) {
+        Row(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                FilterChip(
-                    selected = selectedFilter == "Hari Ini",
-                    onClick = { selectedFilter = "Hari Ini" },
-                    label = { Text("Hari Ini") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = GreenPrimary,
-                        selectedLabelColor = Color.White
-                    )
-                )
-                FilterChip(
-                    selected = selectedFilter == "Minggu",
-                    onClick = { selectedFilter = "Minggu" },
-                    label = { Text("Minggu") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = GreenPrimary,
-                        selectedLabelColor = Color.White
-                    )
-                )
-                FilterChip(
-                    selected = selectedFilter == "Bulan",
-                    onClick = { selectedFilter = "Bulan" },
-                    label = { Text("Bulan") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = GreenPrimary,
-                        selectedLabelColor = Color.White
-                    )
-                )
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Riwayat", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        }
 
-            // List Riwayat
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(historyList) { item ->
-                    HistoryCard(item)
-                }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            FilterChip(
+                selected = selectedFilter == "Hari Ini",
+                onClick = { selectedFilter = "Hari Ini" },
+                label = { Text("Hari Ini") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = GreenPrimary,
+                    selectedLabelColor = Color.White
+                )
+            )
+            FilterChip(
+                selected = selectedFilter == "Minggu",
+                onClick = { selectedFilter = "Minggu" },
+                label = { Text("Minggu") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = GreenPrimary,
+                    selectedLabelColor = Color.White
+                )
+            )
+            FilterChip(
+                selected = selectedFilter == "Bulan",
+                onClick = { selectedFilter = "Bulan" },
+                label = { Text("Bulan") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = GreenPrimary,
+                    selectedLabelColor = Color.White
+                )
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(historyList) { item ->
+                HistoryCard(item)
             }
         }
     }
@@ -128,7 +117,6 @@ fun HistoryCard(item: HistoryItem) {
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Gambar Makanan (Placeholder Bulat)
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.foodName,
@@ -141,7 +129,6 @@ fun HistoryCard(item: HistoryItem) {
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Nama & Tanggal
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.foodName,
@@ -166,20 +153,18 @@ fun HistoryCard(item: HistoryItem) {
                 }
             }
 
-            // Skor
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = item.score.toString(),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GreenPrimary
-                )
-                Text(
-                    text = "/ 100",
-                    fontSize = 10.sp,
-                    color = Color.Gray
-                )
-            }
+            Text(
+                text = item.score.toString(),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = GreenPrimary
+            )
+
+            Text(
+                text = "/ 100",
+                fontSize = 10.sp,
+                color = Color.Gray
+            )
 
             Spacer(modifier = Modifier.width(8.dp))
 

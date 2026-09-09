@@ -1,4 +1,3 @@
-// ui/screens/ProfileScreen.kt
 package com.example.nourishvision.ui.screens
 
 import androidx.compose.foundation.Image
@@ -8,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,106 +23,112 @@ import androidx.compose.ui.unit.sp
 import com.example.nourishvision.R
 import com.example.nourishvision.ui.theme.GreenLight
 import com.example.nourishvision.ui.theme.GreenPrimary
-import androidx.compose.material.icons.automirrored.filled.Logout
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
-    onNavigateToSettings: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Profil", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-            )
-        },
-        containerColor = Color.White
-    ) { paddingValues ->
-        Column(
+    onNavigateToSettings: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(horizontal = 16.dp)
+    ) {
+        // Header Manual
+        Row(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .padding(16.dp)
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // --- Header Profil ---
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Avatar Pengguna (Placeholder dengan gambar/ikon)
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background), // Ganti dengan foto profil user
-                    contentDescription = "Foto Profil",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(GreenLight)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-                    Text(
-                        text = "Zaki Ardiansyah",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "zaki.ardiansyah@gmail.com",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                }
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Profil", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            ProfileMenuItem(
-                icon = Icons.Default.Settings,
-                title = "Pengaturan",
-                onClick = onNavigateToSettings
-            )
-
-            ProfileMenuItem(
-                icon = Icons.Default.Info,
-                title = "Bantuan & FAQ",
-                onClick = { /* Navigasi bantuan */ }
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { /* Logika logout */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE)), // Merah muda muda
-                shape = RoundedCornerShape(12.dp),
+        // Header Profil
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_background),
+                contentDescription = "Foto Profil",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = null,
-                    tint = Color(0xFFD32F2F)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(GreenLight)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
                 Text(
-                    text = "Logout",
-                    color = Color(0xFFD32F2F),
-                    fontWeight = FontWeight.Bold
+                    text = "Zaki Ardiansyah",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "zaki.ardiansyah@gmail.com",
+                    fontSize = 14.sp,
+                    color = Color.Gray
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Menu List
+        ProfileMenuItem(
+            icon = Icons.Default.FoodBank,
+            title = "Edit Profil",
+            onClick = { /* Navigasi edit profil */ }
+        )
+
+        ProfileMenuItem(
+            icon = Icons.Default.Info,
+            title = "Bantuan & FAQ",
+            onClick = { /* Navigasi bantuan */ }
+        )
+
+        ProfileMenuItem(
+            icon = Icons.Default.Settings,
+            title = "Pengaturan",
+            onClick = onNavigateToSettings
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Tombol Logout
+        Button(
+            onClick = { /* Logika logout */ },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE)), // Merah muda muda
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = null,
+                tint = Color(0xFFD32F2F)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Logout",
+                color = Color(0xFFD32F2F),
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
+
 @Composable
 fun ProfileMenuItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
