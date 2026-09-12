@@ -1,4 +1,3 @@
-// ui/theme/Theme.kt
 package com.example.nourishvision.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +28,7 @@ private val AppShapes = Shapes(
 fun NourishVisionTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = LightColors,
-        typography = Typography(), // Anda bisa menyesuaikan font (Poppins/Montserrat) di sini
+        typography = Typography(),
         shapes = AppShapes,
         content = content
     )

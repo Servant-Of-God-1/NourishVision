@@ -1,81 +1,99 @@
 package com.example.nourishvision.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Logout
+import coil.compose.AsyncImage
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.nourishvision.R
+import android.graphics.BitmapFactory
 import com.example.nourishvision.ui.theme.GreenLight
 import com.example.nourishvision.ui.theme.GreenPrimary
+import com.example.nourishvision.ui.viewmodel.AuthViewModel
+import com.example.nourishvision.ui.viewmodel.EditProfileViewModel
+import com.example.nourishvision.ui.viewmodel.UserProfileViewModel
 
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
+    authViewModel: AuthViewModel,
+    editProfileViewModel: EditProfileViewModel,
+    userProfileViewModel: UserProfileViewModel
 ) {
+    val userName by userProfileViewModel.userName.collectAsState()
+    val userEmail by userProfileViewModel.userEmail.collectAsState()
+    val profileImageBase64 by editProfileViewModel.profileImageBase64.collectAsState()
+    val profileBitmap = remember(profileImageBase64) {
+        if (profileImageBase64.isNotEmpty()) {
+            val bytes = android.util.Base64.decode(profileImageBase64, android.util.Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } else {
+            null
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
     ) {
-        // Header Manual
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Profil", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-        }
-
-        // Header Profil
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = "Foto Profil",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(GreenLight)
-            )
+            if (profileBitmap != null) {
+                AsyncImage(
+                    model = profileBitmap,
+                    contentDescription = "Foto Profil",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(GreenLight)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(GreenLight),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Foto Default",
+                        tint = GreenPrimary,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
                 Text(
-                    text = "Zaki Ardiansyah",
+                    text = userName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "zaki.ardiansyah@gmail.com",
+                    text = userEmail,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -84,44 +102,61 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Menu List
-        ProfileMenuItem(
-            icon = Icons.Default.FoodBank,
-            title = "Edit Profil",
-            onClick = { /* Navigasi edit profil */ }
-        )
-
-        ProfileMenuItem(
-            icon = Icons.Default.Info,
-            title = "Bantuan & FAQ",
-            onClick = { /* Navigasi bantuan */ }
-        )
-
         ProfileMenuItem(
             icon = Icons.Default.Settings,
             title = "Pengaturan",
             onClick = onNavigateToSettings
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Tombol Logout
         Button(
-            onClick = { /* Logika logout */ },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE)), // Merah muda muda
+            onClick = {
+                authViewModel.logout {
+                    onNavigateToLogin()
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE)),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.Logout,
+                imageVector = Icons.Default.Logout,
                 contentDescription = null,
                 tint = Color(0xFFD32F2F)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Logout",
+                text = "Keluar Akun",
+                color = Color(0xFFD32F2F),
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                authViewModel.delete {
+                    onNavigateToOnboarding ()
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE)),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.DeleteForever,
+                contentDescription = null,
+                tint = Color(0xFFD32F2F)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Hapus Akun",
                 color = Color(0xFFD32F2F),
                 fontWeight = FontWeight.Bold
             )
@@ -148,7 +183,6 @@ fun ProfileMenuItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Lingkaran kecil untuk ikon
             Box(
                 modifier = Modifier
                     .size(40.dp)

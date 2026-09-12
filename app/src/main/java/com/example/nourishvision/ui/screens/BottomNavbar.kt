@@ -27,8 +27,8 @@ fun BottomNavBar(
 ) {
     val items = listOf(
         NavItem(Routes.HOME, "Home", Icons.Default.Home),
-        NavItem(Routes.SCAN, "Scan", Icons.Default.PhotoCamera),
         NavItem(Routes.HISTORY, "Riwayat", Icons.Default.DateRange),
+        NavItem(Routes.SCAN, "Scan", Icons.Default.PhotoCamera),
         NavItem(Routes.PROGRESS, "Progres", Icons.AutoMirrored.Filled.TrendingUp),
         NavItem(Routes.PROFILE, "Profil", Icons.Default.Person)
     )

@@ -1,6 +1,6 @@
-// ui/screens/OnboardingScreen.kt
 package com.example.nourishvision.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -13,11 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.BackHandler
+import com.example.nourishvision.R  // <-- Import R
 import com.example.nourishvision.data.UserPreferences
 import com.example.nourishvision.ui.theme.GreenLight
 import com.example.nourishvision.ui.theme.GreenPrimary
@@ -32,11 +36,14 @@ fun OnboardingScreen(
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
 
+    BackHandler {
+        (context as? android.app.Activity)?.finishAffinity()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Horizontal Pager
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f)
@@ -45,21 +52,20 @@ fun OnboardingScreen(
                 0 -> OnboardingPage(
                     title = "Belajar Gizi, Mulai dari Makananmu Sehari-hari",
                     desc = "Foto makananmu dan dapatkan analisis gizi secara real-time.",
-                    iconColor = GreenPrimary
+                    imageRes = R.drawable.onboarding_1
                 )
                 1 -> OnboardingPage(
                     title = "Kenali Kandungan Gizi",
                     desc = "Analisis kalori, protein, lemak, dan karbohidrat dengan teknologi AI.",
-                    iconColor = GreenPrimary
+                    imageRes = R.drawable.onboarding_2
                 )
                 2 -> OnboardingPage(
                     title = "Sertifikasinya",
                     desc = "Dapatkan skor keseimbangan gizi untuk hidup lebih sehat.",
-                    iconColor = GreenPrimary
+                    imageRes = R.drawable.onboarding_3
                 )
             }
         }
-
         Row(
             modifier = Modifier.padding(bottom = 24.dp),
             horizontalArrangement = Arrangement.Center
@@ -78,7 +84,6 @@ fun OnboardingScreen(
             }
         }
 
-        // Tombol Navigasi
         Button(
             onClick = {
                 if (pagerState.currentPage < 2) {
@@ -108,7 +113,11 @@ fun OnboardingScreen(
 }
 
 @Composable
-fun OnboardingPage(title: String, desc: String, iconColor: Color) {
+fun OnboardingPage(
+    title: String,
+    desc: String,
+    imageRes: Int
+) {
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -116,11 +125,16 @@ fun OnboardingPage(title: String, desc: String, iconColor: Color) {
     ) {
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .size(250.dp)
                 .background(GreenLight, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text("🍽️", fontSize = 80.sp)
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = title,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(250.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(40.dp))
